@@ -68,9 +68,50 @@ public class TipCalculatorController {
                tipPercentage = 
                   BigDecimal.valueOf(newValue.intValue() / 100.0);
                tipPercentageLabel.setText(percent.format(tipPercentage));
+               try {
+                  BigDecimal amount = new BigDecimal(amountTextField.getText());
+                  BigDecimal tip = amount.multiply(tipPercentage);
+                  BigDecimal total = amount.add(tip);
+
+                  tipTextField.setText(currency.format(tip));
+                  totalTextField.setText(currency.format(total));
+               }
+               catch (NumberFormatException ex) {
+                  amountTextField.setText("Enter amount");
+                  amountTextField.selectAll();
+                  amountTextField.requestFocus();
+               }
+
+
             }
          }
       );
+
+      amountTextField.textProperty().addListener(
+              new ChangeListener<String>() {
+                 @Override
+                 public void changed(ObservableValue<? extends String> ov,
+                                     String oldValue, String newValue) {
+                    amountTextField.setText(newValue);
+                    try {
+                       BigDecimal amount = new BigDecimal(amountTextField.getText());
+                       BigDecimal tip = amount.multiply(tipPercentage);
+                       BigDecimal total = amount.add(tip);
+
+                       tipTextField.setText(currency.format(tip));
+                       totalTextField.setText(currency.format(total));
+                    }
+                    catch (NumberFormatException ex) {
+                       amountTextField.setText("");
+                       amountTextField.selectAll();
+                       amountTextField.requestFocus();
+                    }
+
+
+                 }
+              }
+      );
+
    }
 }
 
